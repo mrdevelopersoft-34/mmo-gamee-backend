@@ -79,3 +79,5 @@ test-results/
 *.backup
 *.old
 
+# Netlify
+.netlify/

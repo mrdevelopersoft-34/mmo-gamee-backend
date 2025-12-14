@@ -28,10 +28,28 @@ app.get("/api/profile", auth, (req, res) => {
 const spec = getSpec();
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(spec));
 
-const start = async () => {
-  await connectDB();
-  const port = process.env.PORT || 3000;
-  app.listen(port, () => {});
+// Initialize database connection (for serverless, this will be called per request)
+let dbConnected = false;
+const initializeDB = async () => {
+  if (!dbConnected) {
+    await connectDB();
+    dbConnected = true;
+  }
 };
 
-start();
+// For local development
+const start = async () => {
+  await initializeDB();
+  const port = process.env.PORT || 3000;
+  app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
+};
+
+// Export app for serverless (Netlify Functions)
+module.exports = { app, initializeDB };
+
+// Start server only if running locally (not in serverless environment)
+if (require.main === module) {
+  start();
+}
