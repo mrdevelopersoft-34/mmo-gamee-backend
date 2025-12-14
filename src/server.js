@@ -20,6 +20,19 @@ app.use(cookieParser());
 app.use(passport.initialize());
 initPassport();
 
+// Root route
+app.get("/", (req, res) => {
+  res.json({ 
+    status: "ok", 
+    message: "MMO Backend API is running",
+    endpoints: {
+      auth: "/api/auth",
+      profile: "/api/profile",
+      docs: "/api-docs"
+    }
+  });
+});
+
 app.use("/api/auth", authRoutes);
 app.get("/api/profile", auth, (req, res) => {
   res.json({ id: req.user.id, email: req.user.email, role: req.user.role, provider: req.user.provider, citizenName: req.user.citizenName, citizenship: req.user.citizenship });
